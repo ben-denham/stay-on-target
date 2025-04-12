@@ -47,12 +47,12 @@ const fetchIssuesByJQL = async (jiraAuth, jql, estimateField, estimateToDays) =>
       estimateDays: issue.fields[estimateField] * estimateToDays,
       resolved: (
         issue.fields.resolutiondate
-          ? moment(issue.fields.resolutiondate)
+          ? moment(issue.fields.resolutiondate).startOf("day")
           : null
       ),
       created: (
         issue.fields.created
-          ? moment(issue.fields.created)
+          ? moment(issue.fields.created).startOf("day")
           : null
       ),
     }))
@@ -81,26 +81,92 @@ async function loadPlotData(searchParams) {
   }
 
   const issues = await fetchIssuesByJQL(jiraAuth, jql, estimateField, estimateToDays);
-  console.log(issues);
+  const resolvedIssues = issues.filter((issue) => issue.resolved);
 
-  const momentRange = [];
-  const endMoment = moment(end);
-  let latestMoment = moment(start);
-  while (latestMoment <= endMoment) {
-    momentRange.push(latestMoment);
-    latestMoment = latestMoment.add(1, "days");
+  const todayMoment = moment().startOf("day");
+  const startMoment = moment(start).startOf("day");
+  const endMoment = moment(end).startOf("day");
+  const elapsedDays = todayMoment.diff(startMoment, "days");
+
+  const initialScope = issues.filter(issue => issue.created <= startMoment).reduce((total, issue) => total + issue.estimateDays, 0);
+  const initialResolved = resolvedIssues.filter(issue => issue.resolved <= startMoment).reduce((total, issue) => total + issue.estimateDays, 0);
+  const totalScope = issues.reduce((total, issue) => total + issue.estimateDays, 0);
+  const totalResolved = resolvedIssues.reduce((total, issue) => total + issue.estimateDays, 0);
+
+  const scopeRate = (totalScope - initialScope) / elapsedDays;
+  const resolvedRate = (totalResolved - initialResolved) / elapsedDays;
+
+  const timeline = [];
+  const issuesQueue = issues.sort((a, b) => a.created.diff(b.created));
+  const resolvedIssuesQueue = resolvedIssues.sort((a, b) => a.resolved.diff(b.resolved));
+  let currentMoment = startMoment;
+  let currentScopeDays = 0;
+  let currentResolvedDays = 0;
+  while (currentMoment <= endMoment) {
+    let todayRelDays = currentMoment.diff(todayMoment, "days");
+
+    while (true) {
+      if (issuesQueue.length === 0 || issuesQueue[0].created > currentMoment) {
+        break;
+      }
+      let issue = issuesQueue.shift();
+      currentScopeDays += issue.estimateDays;
+    }
+
+    while (true) {
+      if (resolvedIssuesQueue.length === 0 || resolvedIssuesQueue[0].resolved > currentMoment) {
+        break;
+      }
+      let issue = resolvedIssuesQueue.shift();
+      currentResolvedDays += issue.estimateDays;
+    }
+
+    let projectedScopeDays = currentScopeDays + (todayRelDays * scopeRate);
+    let projectedResolvedDays = currentResolvedDays + (todayRelDays * resolvedRate);
+    timeline.push({
+      moment: currentMoment,
+      scopeDays: (todayRelDays <= 0) ? currentScopeDays : null,
+      projectedScopeDays: (todayRelDays >= 0) ? projectedScopeDays : null,
+      resolvedDays: (todayRelDays <= 0) ? currentResolvedDays : null,
+      projectedResolvedDays: (todayRelDays >= 0) ? Math.min(projectedResolvedDays, projectedScopeDays) : null,
+    });
+
+    if (projectedResolvedDays >= projectedScopeDays) {
+      break;
+    }
+    currentMoment = moment(currentMoment).add(1, "days");
   }
-  console.log(momentRange);
 
+  const xDates = timeline.map(step => step.moment.format("YYYY-MM-DD"));
   return [
     {
-      x: [1, 2, 3],
-      y: [2, 6, 3],
+      x: xDates,
+      y: timeline.map(step => step.projectedResolvedDays),
+      type: 'scatter',
+      mode: 'lines+markers',
+      marker: {color: 'teal'},
+    },
+    {
+      x: xDates,
+      y: timeline.map(step => step.resolvedDays),
+      type: 'scatter',
+      mode: 'lines+markers',
+      marker: {color: 'blue'},
+    },
+    {
+      x: xDates,
+      y: timeline.map(step => step.projectedScopeDays),
+      type: 'scatter',
+      mode: 'lines+markers',
+      marker: {color: 'orange'},
+    },
+    {
+      x: xDates,
+      y: timeline.map(step => step.scopeDays),
       type: 'scatter',
       mode: 'lines+markers',
       marker: {color: 'red'},
     },
-    {type: 'bar', x: [1, 2, 3], y: [2, 5, 3]},
   ];
 }
 

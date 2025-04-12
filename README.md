@@ -4,8 +4,10 @@ Flexible and focussed burn-up chart on top of Jira.
 
 ## TODO
 
+* Calculate projected end dates with projected/current scopes
 * Handle API failures
 * In case of CORS error, remind to disable CORS and set user agent
+* Document how to enable Story Point Estimate on JIRA for testing
 
 
 ## Getting Started
