@@ -59,7 +59,7 @@ const fetchIssuesByJQL = async (jiraAuth, jql, estimateField, estimateToDays) =>
     .filter((issue) => issue.estimateDays > 0);
 };
 
-async function loadPlotData(searchParams) {
+async function loadBurnupData(searchParams) {
   const title = searchParams.get("title");
   const jql = searchParams.get("jql");
   const estimateField = searchParams.get("estimateField");
@@ -137,22 +137,17 @@ async function loadPlotData(searchParams) {
     currentMoment = moment(currentMoment).add(1, "days");
   }
 
+  const daysRemaining = Math.ceil((totalScope - totalResolved) / (resolvedRate - scopeRate));
+  const projectedCompletedMoment = moment(todayMoment).add(daysRemaining, "days")
+
+  return { timeline, projectedCompletedMoment };
+}
+
+function BurnupPlot({ burnupDataPromise }) {
+  const { timeline, projectedCompletedMoment } = use(burnupDataPromise);
+
   const xDates = timeline.map(step => step.moment.format("YYYY-MM-DD"));
-  return [
-    {
-      x: xDates,
-      y: timeline.map(step => step.projectedResolvedDays),
-      type: 'scatter',
-      mode: 'lines+markers',
-      marker: {color: 'teal'},
-    },
-    {
-      x: xDates,
-      y: timeline.map(step => step.resolvedDays),
-      type: 'scatter',
-      mode: 'lines+markers',
-      marker: {color: 'blue'},
-    },
+  const traces = [
     {
       x: xDates,
       y: timeline.map(step => step.projectedScopeDays),
@@ -167,17 +162,31 @@ async function loadPlotData(searchParams) {
       mode: 'lines+markers',
       marker: {color: 'red'},
     },
+    {
+      x: xDates,
+      y: timeline.map(step => step.projectedResolvedDays),
+      type: 'scatter',
+      mode: 'lines+markers',
+      marker: {color: 'teal'},
+    },
+    {
+      x: xDates,
+      y: timeline.map(step => step.resolvedDays),
+      type: 'scatter',
+      mode: 'lines+markers',
+      marker: {color: 'blue'},
+    },
   ];
-}
 
-function BurnupPlot({ plotDataPromise }) {
-  const plotData = use(plotDataPromise);
   return (
-    <Plot
-      data={plotData}
-      config={ {responsive: true} }
-      style={ {width: "100%", height: "100%"} }
-    />
+    <div style={{display: "flex", flexDirection: "column", height: "100%"}}>
+      <Plot
+        data={traces}
+        config={ {responsive: true} }
+        style={ {width: "100%", height: "100%"} }
+      />
+      <div>{projectedCompletedMoment.toString()}</div>
+    </div>
   )
 }
 
@@ -195,7 +204,7 @@ export default function BurnupPage() {
     <main style={{display: "flex", flexDirection: "column", height: "100%"}}>
       <h1>{title}</h1>
       <Suspense fallback={<Loading />}>
-        <BurnupPlot plotDataPromise={loadPlotData(searchParams)} />
+        <BurnupPlot burnupDataPromise={loadBurnupData(searchParams)} />
       </Suspense>
     </main>
   );

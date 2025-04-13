@@ -2,12 +2,15 @@
 
 Flexible and focussed burn-up chart on top of Jira.
 
+The code is currently a piece of junk, but it'll make the Kessel Run
+in less than 12 parsecs ;)
+
+
 ## TODO
 
-* Calculate projected end dates with projected/current scopes
-* Handle API failures
+* Gracefully handle invalid config
+* Gracefully handle API failures
 * In case of CORS error, remind to disable CORS and set user agent
-* Document how to enable Story Point Estimate on JIRA for testing
 
 
 ## Getting Started
@@ -17,7 +20,7 @@ Flexible and focussed burn-up chart on top of Jira.
 Install the dependencies:
 
 ```bash
-npm install
+make deps
 ```
 
 ### Development
@@ -25,10 +28,33 @@ npm install
 Start the development server with HMR:
 
 ```bash
-npm run dev
+make dev
 ```
 
 Your application will be available at `http://localhost:5173`.
+
+### Getting around CORS restrictions
+
+The Jira API does not allow requests from other domains (i.e. it has
+CORS restrictions), so you'll need to run your browser with CORS
+checks disabled and a custom user agent:
+
+```
+make chrome
+```
+
+### Setting up Jira for testing
+
+1. Create a Jira project
+2. Under `Project Settings -> Features`, enable `Estimation` with `Story Point estimate`
+3. Find out the custom field ID for `Story Point estimate` by:
+   1. Opening the list of issues
+   2. Switching to `JQL` query mode
+   3. Start typing `Story Point estimate` to see an autocomplete
+      option like `Story Point estimate cf[10016]`
+   4. In that case, the estimate field name you configure
+      stay-on-target with should be: `customfield_10016`
+
 
 ## Building for Production
 
@@ -37,6 +63,7 @@ Create a production build:
 ```bash
 npm run build
 ```
+
 
 ## Deployment
 
