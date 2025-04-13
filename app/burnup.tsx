@@ -270,7 +270,7 @@ function BurnupPlot({ burnupDataPromise }) {
           xaxis: {
             tickformat: "%b %d",
             tickmode: "linear",
-            tick0: timeline[0].moment.format("YYYY-MM-DD"),
+            tick0: startMoment.format("YYYY-MM-DD"),
             dtick: tickDays * 24 * 60 * 60 * 1000, // milliseconds
             tickfont: {
               family: "News Gothic Bold",
@@ -280,6 +280,7 @@ function BurnupPlot({ burnupDataPromise }) {
             zeroline: false,
             gridcolor: "#916D00",
             gridwidth: 1,
+            range: [startMoment.format("YYYY-MM-DD"), endMoment.format("YYYY-MM-DD")],
           },
           yaxis: {
             hoverformat: ".0f",
