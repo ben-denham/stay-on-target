@@ -8,6 +8,7 @@ in less than 12 parsecs ;)
 
 ## TODO
 
+* Screenshot for README
 * Gracefully handle invalid config
 * Gracefully handle API failures
 * In case of CORS error, remind to disable CORS and set user agent

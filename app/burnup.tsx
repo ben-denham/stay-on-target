@@ -5,9 +5,10 @@ import moment from "moment";
 import Plot from 'react-plotly.js';
 import type { Route } from "./+types/burnup";
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ location }: Route.MetaArgs) {
+  const searchParams = new URLSearchParams(location.search);
   return [
-    { title: "Stay on Target" },
+    { title: `${searchParams.get("title")} - Stay on Target!` },
   ];
 }
 
@@ -102,6 +103,7 @@ async function loadBurnupData(searchParams) {
   let currentMoment = startMoment;
   let currentScopeDays = 0;
   let currentResolvedDays = 0;
+  let previousDayFullyResolved = false;
   while (currentMoment <= endMoment) {
     let todayRelDays = currentMoment.diff(todayMoment, "days");
 
@@ -123,17 +125,16 @@ async function loadBurnupData(searchParams) {
 
     let projectedScopeDays = currentScopeDays + (todayRelDays * scopeRate);
     let projectedResolvedDays = currentResolvedDays + (todayRelDays * resolvedRate);
+    let fullyResolved = projectedResolvedDays >= projectedScopeDays
     timeline.push({
       moment: currentMoment,
       scopeDays: (todayRelDays <= 0) ? currentScopeDays : null,
-      projectedScopeDays: (todayRelDays >= 0) ? projectedScopeDays : null,
+      projectedScopeDays: (todayRelDays >= 0 && !(fullyResolved && previousDayFullyResolved)) ? projectedScopeDays : null,
       resolvedDays: (todayRelDays <= 0) ? currentResolvedDays : null,
-      projectedResolvedDays: (todayRelDays >= 0) ? Math.min(projectedResolvedDays, projectedScopeDays) : null,
+      projectedResolvedDays: (todayRelDays >= 0 && !(fullyResolved && previousDayFullyResolved)) ? Math.min(projectedResolvedDays, projectedScopeDays) : null,
     });
 
-    if (projectedResolvedDays >= projectedScopeDays) {
-      break;
-    }
+    previousDayFullyResolved = fullyResolved;
     currentMoment = moment(currentMoment).add(1, "days");
   }
 
@@ -145,6 +146,8 @@ async function loadBurnupData(searchParams) {
 
 function BurnupPlot({ burnupDataPromise }) {
   const { timeline, projectedCompletedMoment } = use(burnupDataPromise);
+
+  console.log(timeline);
 
   const xDates = timeline.map(step => step.moment.format("YYYY-MM-DD"));
   const traces = [

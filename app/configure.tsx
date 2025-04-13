@@ -4,7 +4,7 @@ import type { Route } from "./+types/configure";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Stay on Target" },
+    { title: "Stay on Target!" },
   ];
 }
 
