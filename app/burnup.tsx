@@ -138,14 +138,20 @@ async function loadBurnupData(searchParams) {
     currentMoment = moment(currentMoment).add(1, "days");
   }
 
-  const daysRemaining = Math.ceil((totalScope - totalResolved) / (resolvedRate - scopeRate));
-  const projectedCompletedMoment = moment(todayMoment).add(daysRemaining, "days")
+  let projectedCompleted = "Never";
+  if (totalResolved >= totalScope) {
+    projectedCompleted = "Direct Hit";
+  }
+  else if (resolvedRate >= scopeRate) {
+    const daysRemaining = Math.ceil((totalScope - totalResolved) / (resolvedRate - scopeRate));
+    projectedCompleted = moment(todayMoment).add(daysRemaining, "days").format("MMM DD");
+  }
 
-  return { startMoment, endMoment, todayMoment, timeline, projectedCompletedMoment };
+  return { startMoment, endMoment, todayMoment, timeline, projectedCompleted };
 }
 
 function BurnupPlot({ burnupDataPromise }) {
-  const { startMoment, endMoment, todayMoment, timeline, projectedCompletedMoment } = use(burnupDataPromise);
+  const { startMoment, endMoment, todayMoment, timeline, projectedCompleted } = use(burnupDataPromise);
 
   const maxY = Math.max(...timeline.map(step => Math.max(step.scopeDays || 0, step.resolvedDays || 0, step.projectedScopeDays || 0, step.projectedResolvedDays || 0)));
   const rangeY = [-1, maxY * 1.08];
@@ -298,7 +304,7 @@ function BurnupPlot({ burnupDataPromise }) {
         </div>
         <div style={{ flex: 1 }}></div>
         <div style={{ color: "#FFBF00", marginRight: "0.5em", paddingTop: "0.2em" }}>Est. Target: </div>
-        <div style={{ color: "#FF1500", border: "2px solid #FFBF00", padding: "0.2em", paddingBottom: "0", borderRadius: "0.4em"}}>{projectedCompletedMoment.format("MMM DD")}</div>
+        <div style={{ color: "#FF1500", border: "2px solid #FFBF00", padding: "0.2em", paddingBottom: "0", borderRadius: "0.4em"}}>{projectedCompleted}</div>
       </div>
     </div>
   )
@@ -320,7 +326,7 @@ export default function BurnupPage() {
 
   return (
     <main style={{ display: "flex", flexDirection: "column", height: "100%", padding: "20px", boxSizing: "border-box" }}>
-      <a href={`/?${searchParams}`}><h1 style={{ color: "#FF1500", margin: "0.2em 0", fontSize: "3em", textAlign: "center" }}>{title}</h1></a>
+      <a href={`/?${searchParams}`} style={{ textDecoration: "none" }}><h1 style={{ color: "#FF1500", margin: "0.2em 0", fontSize: "3em", textAlign: "center" }}>{title}</h1></a>
       <Suspense fallback={<Loading />}>
         <BurnupPlot burnupDataPromise={loadBurnupData(searchParams)} />
       </Suspense>

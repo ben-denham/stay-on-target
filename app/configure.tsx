@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
+import moment from "moment";
 import type { Route } from "./+types/configure";
 
 export function meta({}: Route.MetaArgs) {
@@ -48,45 +49,49 @@ export default function ConfigurePage() {
   };
 
   return (
-    <main>
+    <main id="configure-page">
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="jiraDomain">Jira Domain:</label>
-          <input id="jiraDomain" name="jiraDomain" defaultValue={savedJiraAuth.domain} required />
+        <div className="inputs-wrapper">
+          <div>
+            <label htmlFor="jiraDomain">Jira Domain:</label>
+            <input id="jiraDomain" name="jiraDomain" defaultValue={savedJiraAuth.domain} required />
+          </div>
+          <div>
+            <label htmlFor="jiraUsername">Jira Username:</label>
+            <input id="jiraUsername" name="jiraUsername" defaultValue={savedJiraAuth.username} required />
+          </div>
+          <div>
+            <label htmlFor="jiraToken"><a target="_blank" rel="noreferrer noopener" href="https://id.atlassian.com/manage-profile/security/api-tokens" style={{ textUnderlineOffset: "4px" }}>Jira API Token</a>:</label>
+            <input type="password" autoComplete="off" id="jiraToken" name="jiraToken" defaultValue={savedJiraAuth.token} required />
+          </div>
+          <div>
+            <label htmlFor="targetTitle">Target title:</label>
+            <input id="targetTitle" name="targetTitle" defaultValue={searchParams.get("title")} required />
+          </div>
+          <div>
+            <label htmlFor="jqlQuery">JQL Query:</label>
+            <input id="jqlQuery" name="jqlQuery" defaultValue={searchParams.get("jql") || "project = \"TODO\""} required />
+          </div>
+          <div>
+            <label htmlFor="estimateField">Estimate Field:</label>
+            <input id="estimateField" name="estimateField" defaultValue={searchParams.get("estimateField")} required />
+          </div>
+          <div>
+            <label htmlFor="estimateToDays">Days / Estimate:</label>
+            <input type="number" id="estimateToDays" name="estimateToDays" defaultValue={searchParams.get("estimateToDays") || 1} required />
+          </div>
+          <div>
+            <label htmlFor="startDate">Start Date:</label>
+            <input type="date" id="startDate" name="startDate" defaultValue={searchParams.get("start")} required />
+          </div>
+          <div>
+            <label htmlFor="endDate">End Date:</label>
+            <input type="date" id="endDate" name="endDate" defaultValue={searchParams.get("end")} required />
+          </div>
         </div>
-        <div>
-          <label htmlFor="jiraUsername">Jira Username:</label>
-          <input id="jiraUsername" name="jiraUsername" defaultValue={savedJiraAuth.username} required />
+        <div className="submit-wrapper">
+          <button type="submit">Stay on Target</button>
         </div>
-        <div>
-          <label htmlFor="jiraToken">Jira API Token (<a href="https://id.atlassian.com/manage-profile/security/api-tokens">generate one here</a>):</label>
-          <input id="jiraToken" name="jiraToken" defaultValue={savedJiraAuth.token} required />
-        </div>
-        <div>
-          <label htmlFor="targetTitle">Target title:</label>
-          <input id="targetTitle" name="targetTitle" defaultValue={searchParams.get("title")} required />
-        </div>
-        <div>
-          <label htmlFor="jqlQuery">JQL Query:</label>
-          <input id="jqlQuery" name="jqlQuery" defaultValue={searchParams.get("jql")} required />
-        </div>
-        <div>
-          <label htmlFor="estimateField">Jira Estimate Field:</label>
-          <input id="estimateField" name="estimateField" defaultValue={searchParams.get("estimateField")} required />
-        </div>
-        <div>
-          <label htmlFor="estimateToDays">Conversion factor from estimate to days:</label>
-          <input type="number" id="estimateToDays" name="estimateToDays" defaultValue={searchParams.get("estimateToDays")} required />
-        </div>
-        <div>
-          <label htmlFor="startDate">Start Date:</label>
-          <input type="date" id="startDate" name="startDate" defaultValue={searchParams.get("start")} required />
-        </div>
-        <div>
-          <label htmlFor="endDate">End Date:</label>
-          <input type="date" id="endDate" name="endDate" defaultValue={searchParams.get("end")} required />
-        </div>
-        <button type="submit">Stay on Target!</button>
       </form>
     </main>
   );

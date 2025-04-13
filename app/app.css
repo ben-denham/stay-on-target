@@ -1,16 +1,3 @@
-html,
-body {
-    height: 100%;
-    margin: 0;
-    font-family: "SceletAF";
-    background: #0f0e0a;
-    color: #916D00;
-}
-
-a {
-    text-decoration: none;
-}
-
 @font-face{
   font-family: "SceletAF";
   src: url('./SceletAF/SceletAF.otf')
@@ -19,4 +6,93 @@ a {
 @font-face{
   font-family: "News Gothic Bold";
   src: url('./fonts/News Gothic Bold.otf')
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    font-family: "SceletAF", sans-serif;
+    background: #0f0e0a;
+    color: #916D00;
+}
+
+a {
+    color: inherit;
+}
+
+#configure-page {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: url('./images/configure-background.png');
+    background-repeat: no-repeat;
+    background-position-x: center;
+    background-size: cover;
+}
+
+#configure-page form {
+    background: #0f0e0a;
+    border: 1.5em solid #262626;
+    border-radius: 1em;
+    padding: 3em;
+
+    display: flex;
+    flex-direction: column;
+}
+
+#configure-page form .inputs-wrapper {
+    margin-bottom: 1em;
+}
+
+#configure-page form .inputs-wrapper > div {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1.5em;
+    align-items: center;
+}
+
+#configure-page form .inputs-wrapper > div label {
+    color: #FFBF00;
+    margin-right: 1em;
+    font-size: 1.5em;
+    padding-top: 0.3em;
+}
+
+#configure-page form .inputs-wrapper > div input {
+    color-scheme: dark;
+    color: #B30F00;
+    border: 0.1em solid #916D00;
+    padding: 0.4em;
+    font-family: "News Gothic Bold";
+    font-size: 1em;
+    border-radius: 0.4em;
+    background: #0f0e0a;
+    width: 30vw;
+}
+
+#configure-page form .inputs-wrapper > div input:focus-visible {
+    border-color: #FFBF00;
+    outline: 0.1em solid #FFBF00;
+}
+
+#configure-page form .inputs-wrapper > div input::-webkit-calendar-picker-indicator {
+  /* https://stackoverflow.com/a/67376605 */
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="15" viewBox="0 0 24 24"><path fill="%23FF1500" d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>');
+}
+
+#configure-page form button {
+    display: block;
+    margin: auto;
+    color: #FF1500;
+    border: 0.1em solid #FFBF00;
+    padding: 0.4em;
+    padding-bottom: 0.2em;
+    font-family: "SceletAF";
+    font-size: 2em;
+    border-radius: 0.4em;
+    background: #0f0e0a;
+    cursor: pointer;
 }

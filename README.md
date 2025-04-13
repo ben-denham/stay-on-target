@@ -5,10 +5,13 @@ Flexible and focussed burn-up chart on top of Jira.
 The code is currently a piece of junk, but it'll make the Kessel Run
 in less than 12 parsecs ;)
 
+<img src="screenshots/configure.png" width="1000px">
+
+<img src="screenshots/burnup.png" width="1000px">
+
 
 ## TODO
 
-* Screenshot for README
 * Gracefully handle invalid config
 * Gracefully handle API failures
 * In case of CORS error, remind to disable CORS and set user agent
