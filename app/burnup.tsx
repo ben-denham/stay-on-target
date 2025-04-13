@@ -141,43 +141,90 @@ async function loadBurnupData(searchParams) {
   const daysRemaining = Math.ceil((totalScope - totalResolved) / (resolvedRate - scopeRate));
   const projectedCompletedMoment = moment(todayMoment).add(daysRemaining, "days")
 
-  return { timeline, projectedCompletedMoment };
+  return { startMoment, endMoment, todayMoment, timeline, projectedCompletedMoment };
 }
 
 function BurnupPlot({ burnupDataPromise }) {
-  const { timeline, projectedCompletedMoment } = use(burnupDataPromise);
+  const { startMoment, endMoment, todayMoment, timeline, projectedCompletedMoment } = use(burnupDataPromise);
 
-  console.log(timeline);
+  const maxY = Math.max(...timeline.map(step => Math.max(step.scopeDays || 0, step.resolvedDays || 0, step.projectedScopeDays || 0, step.projectedResolvedDays || 0)));
+  const rangeY = [-1, maxY * 1.08];
+  const weekCount = Math.floor(endMoment.diff(startMoment, "days") / 7);
+  const desiredTicks = 5;
+  const tickDays = Math.ceil(weekCount / desiredTicks) * 7;
 
   const xDates = timeline.map(step => step.moment.format("YYYY-MM-DD"));
+  const lineWidth = 8;
+  const markerSize = 15;
   const traces = [
+    {
+      x: [todayMoment.format("YYYY-MM-DD"), todayMoment.format("YYYY-MM-DD")],
+      y: rangeY,
+      type: 'scatter',
+      mode: 'lines',
+      name: "Today",
+      line: {
+        dash: "dot",
+        color: "#916D00",
+        width: 8,
+      },
+      hovertemplate: '<span style="text-transform: uppercase;">%{x}</span><extra></extra>',
+    },
     {
       x: xDates,
       y: timeline.map(step => step.projectedScopeDays),
       type: 'scatter',
-      mode: 'lines+markers',
-      marker: {color: 'orange'},
+      mode: 'lines',
+      name: "Est. Scope",
+      line: {
+        dash: "dashdot",
+        color: "#FFBF00",
+        width: lineWidth,
+      },
+      hovertemplate: '<span style="color: #FFBF00; text-transform: uppercase;">%{x} | Est. Scope: %{y:.0f} days</span><extra></extra>',
     },
     {
       x: xDates,
       y: timeline.map(step => step.scopeDays),
       type: 'scatter',
       mode: 'lines+markers',
-      marker: {color: 'red'},
+      name: "Scope",
+      line: {
+        color: "#FFBF00",
+        width: lineWidth,
+      },
+      marker: {
+        size: markerSize,
+      },
+      hovertemplate: '<span style="color: #FFBF00; text-transform: uppercase;">%{x} | Scope: %{y:.0f} days</span><extra></extra>',
     },
     {
       x: xDates,
       y: timeline.map(step => step.projectedResolvedDays),
       type: 'scatter',
-      mode: 'lines+markers',
-      marker: {color: 'teal'},
+      mode: 'lines',
+      name: "Est. Done",
+      line: {
+        dash: "dashdot",
+        color: "#FF1500",
+        width: lineWidth,
+      },
+      hovertemplate: '<span style="color: #FF1500; text-transform: uppercase;">%{x} | Est. Done: %{y:.0f} days</span><extra></extra>',
     },
     {
       x: xDates,
       y: timeline.map(step => step.resolvedDays),
       type: 'scatter',
       mode: 'lines+markers',
-      marker: {color: 'blue'},
+      name: "Done",
+      line: {
+        color: "#FF1500",
+        width: lineWidth,
+      },
+      marker: {
+        size: markerSize,
+      },
+      hovertemplate: '<span style="color: #FF1500; text-transform: uppercase;">%{x} | Done: %{y:.0f} days</span><extra></extra>',
     },
   ];
 
@@ -185,16 +232,84 @@ function BurnupPlot({ burnupDataPromise }) {
     <div style={{display: "flex", flexDirection: "column", height: "100%"}}>
       <Plot
         data={traces}
-        config={ {responsive: true} }
+        layout={{
+          showlegend: false,
+          theme: "plotly_dark",
+          paper_bgcolor: "#0f0e0a",
+          plot_bgcolor: "#0f0e0a",
+          font: {
+            family: "SceletAF, sans-serif",
+            color: "#FF1500",
+            size: 18,
+          },
+          margin: {
+            t: 0,
+            b: 50,
+            l: 60,
+            r: 0,
+            pad: 10,
+          },
+          grid: {
+          },
+          hoverlabel: {
+            bgcolor: "#0f0e0a",
+            bordercolor: "white",
+            font: {
+              family: "News Gothic Bold",
+              size: 18,
+              textcase: "upper",
+              color: "white",
+            },
+          },
+          xaxis: {
+            tickformat: "%b %d",
+            tickmode: "linear",
+            tick0: timeline[0].moment.format("YYYY-MM-DD"),
+            dtick: tickDays * 24 * 60 * 60 * 1000, // milliseconds
+            tickfont: {
+              family: "News Gothic Bold",
+              color: "#FFBF00",
+              textcase: "upper",
+            },
+            zeroline: false,
+            gridcolor: "#916D00",
+            gridwidth: 1,
+          },
+          yaxis: {
+            hoverformat: ".0f",
+            zeroline: false,
+            gridcolor: "#916D00",
+            gridwidth: 1,
+            range: rangeY,
+            tick0: 0,
+            dtick: tickDays,
+          },
+        }}
+        config={ {
+          responsive: true,
+          modeBarButtonsToRemove: ["zoom2d", "pan2d", "select2d", "lasso2d", "zoomin2d", "zoomout2d", "autoScale2d"],
+        } }
         style={ {width: "100%", height: "100%"} }
       />
-      <div>{projectedCompletedMoment.toString()}</div>
+      <div style={{ display: "flex", fontSize: "2.5em", alignItems: "center" }}>
+        <div style={{ paddingTop: "0.2em" }}>
+          <span style={{ color: "#FFBF00" }}>Scope</span>&nbsp;/&nbsp;
+          <span style={{ color: "#FF1500" }}>Done</span>
+        </div>
+        <div style={{ flex: 1 }}></div>
+        <div style={{ color: "#FFBF00", marginRight: "0.5em", paddingTop: "0.2em" }}>Est. Target: </div>
+        <div style={{ color: "#FF1500", border: "2px solid #FFBF00", padding: "0.2em", paddingBottom: "0", borderRadius: "0.4em"}}>{projectedCompletedMoment.format("MMM DD")}</div>
+      </div>
     </div>
   )
 }
 
 function Loading() {
-  return <p>Loading...</p>
+  return (
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%" }}>
+      <p style={{ fontSize: "2em", color: "#FF1500" }}>Targeting...</p>
+    </div>
+  );
 }
 
 export default function BurnupPage() {
@@ -204,8 +319,8 @@ export default function BurnupPage() {
   const title = searchParams.get("title");
 
   return (
-    <main style={{display: "flex", flexDirection: "column", height: "100%"}}>
-      <h1>{title}</h1>
+    <main style={{ display: "flex", flexDirection: "column", height: "100%", padding: "20px", boxSizing: "border-box" }}>
+      <a href={`/?${searchParams}`}><h1 style={{ color: "#FF1500", margin: "0.2em 0", fontSize: "3em", textAlign: "center" }}>{title}</h1></a>
       <Suspense fallback={<Loading />}>
         <BurnupPlot burnupDataPromise={loadBurnupData(searchParams)} />
       </Suspense>

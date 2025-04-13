@@ -49,7 +49,6 @@ export default function ConfigurePage() {
 
   return (
     <main>
-      <h1>Stay on Target</h1>
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="jiraDomain">Jira Domain:</label>
@@ -87,7 +86,7 @@ export default function ConfigurePage() {
           <label htmlFor="endDate">End Date:</label>
           <input type="date" id="endDate" name="endDate" defaultValue={searchParams.get("end")} required />
         </div>
-        <button type="submit">Submit</button>
+        <button type="submit">Stay on Target!</button>
       </form>
     </main>
   );

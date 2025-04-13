@@ -2,4 +2,21 @@ html,
 body {
     height: 100%;
     margin: 0;
+    font-family: "SceletAF";
+    background: #0f0e0a;
+    color: #916D00;
+}
+
+a {
+    text-decoration: none;
+}
+
+@font-face{
+  font-family: "SceletAF";
+  src: url('./SceletAF/SceletAF.otf')
+}
+
+@font-face{
+  font-family: "News Gothic Bold";
+  src: url('./fonts/News Gothic Bold.otf')
 }
