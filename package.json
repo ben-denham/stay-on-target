@@ -6,6 +6,7 @@
     "build": "react-router build",
     "dev": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
+    "serve": "serve --single -l tcp://localhost:3000 ./build/client/",
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
@@ -16,7 +17,8 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router": "^7.5.0",
-    "react-use": "^17.6.0"
+    "react-use": "^17.6.0",
+    "serve": "^14.2.4"
   },
   "devDependencies": {
     "@react-router/dev": "^7.5.0",

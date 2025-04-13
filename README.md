@@ -61,11 +61,17 @@ make chrome
 Create a production build:
 
 ```bash
-npm run build
+make build
 ```
 
 
 ## Deployment
+
+### Serve build directory
+
+```bash
+make serve
+```
 
 ### Docker Deployment
 
