@@ -1,3 +1,5 @@
+.PHONY: deps dev build serve chrome chromium
+
 deps:
 	npm install
 	cd public && \
