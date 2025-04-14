@@ -27,7 +27,7 @@ const fetchIssuesByJQL = async (jiraAuth, jql, estimateField, estimateToDays) =>
   let issues = [];
   let nextPageToken = undefined;
   do {
-    const response = await axiosInstance.get("search", null, { params: {
+    const response = await axiosInstance.post("search", null, {
       nextPageToken: nextPageToken,
       jql: jql,
       maxResults: 5000,
@@ -36,7 +36,7 @@ const fetchIssuesByJQL = async (jiraAuth, jql, estimateField, estimateToDays) =>
         "resolutiondate",
         estimateField,
       ],
-    }});
+    });
 
     issues = issues.concat(response.data.issues);
     nextPageToken = response.data.nextPageToken;
