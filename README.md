@@ -43,8 +43,14 @@ The Jira API does not allow requests from other domains (i.e. it has
 CORS restrictions), so you'll need to run your browser with CORS
 checks disabled and a custom user agent:
 
-```
+```bash
 make chrome
+```
+
+OR
+
+```bash
+make chromium
 ```
 
 ### Setting up Jira for testing

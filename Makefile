@@ -14,3 +14,5 @@ serve:
 
 chrome:
 	google-chrome --user-agent=stay-on-target --disable-web-security --user-data-dir=".chrome"
+chromium:
+	chromium-browser --user-agent=stay-on-target --disable-web-security --user-data-dir=".chromium"

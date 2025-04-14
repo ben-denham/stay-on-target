@@ -6,4 +6,5 @@
 /build/
 
 .chrome
+.chromium
 public/SceletAF/
