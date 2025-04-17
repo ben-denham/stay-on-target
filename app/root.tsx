@@ -11,8 +11,8 @@ import type { Route } from "./+types/root";
 import "./app.css";
 
 export const links: Route.LinksFunction = () => [
-  { rel: "preload", href: "./SceletAF/SceletAF.otf", as: "font", type: "font/otf", crossOrigin: "true" },
-  { rel: "preload", href: "./fonts/News Gothic Bold.otf", as: "font", type: "font/otf", crossOrigin: "true" },
+  { rel: "preload", href: "./app/assets/fonts/SceletAF/SceletAF.otf", as: "font", type: "font/otf", crossOrigin: "true" },
+  { rel: "preload", href: "./app/assets/fonts/News Gothic Bold.otf", as: "font", type: "font/otf", crossOrigin: "true" },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {

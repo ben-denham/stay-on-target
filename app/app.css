@@ -1,11 +1,11 @@
 @font-face{
   font-family: "SceletAF";
-  src: url('./SceletAF/SceletAF.otf')
+  src: url('./assets/fonts/SceletAF/SceletAF.otf')
 }
 
 @font-face{
   font-family: "News Gothic Bold";
-  src: url('./fonts/News Gothic Bold.otf')
+  src: url('./assets/fonts/News Gothic Bold.otf')
 }
 
 html,
@@ -27,7 +27,7 @@ a {
     align-items: center;
     justify-content: center;
 
-    background: url('./images/configure-background.png');
+    background: url('./assets/images/configure-background.png');
     background-repeat: no-repeat;
     background-position-x: center;
     background-size: cover;

@@ -2,7 +2,7 @@
 
 deps:
 	npm install
-	cd public && \
+	cd app/assets/fonts && \
 		wget https://aurekfonts.github.io/SceletAF/SceletAF.zip && \
 		unzip SceletAF.zip -d SceletAF && \
 		rm SceletAF.zip
