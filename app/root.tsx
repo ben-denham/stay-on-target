@@ -15,6 +15,14 @@ export const links: Route.LinksFunction = () => [
   { rel: "preload", href: "./app/assets/fonts/News Gothic Bold.otf", as: "font", type: "font/otf", crossOrigin: "true" },
 ];
 
+export function HydrateFallback({}: Route.MetaArgs) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%" }}>
+      <p style={{ fontSize: "2em", color: "#FF1500" }}>Loading...</p>
+    </div>
+  );
+}
+
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
