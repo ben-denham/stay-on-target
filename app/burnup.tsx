@@ -280,7 +280,7 @@ function BurnupPlot({ burnupDataPromise }) {
             zeroline: false,
             gridcolor: "#916D00",
             gridwidth: 1,
-            range: [startMoment.format("YYYY-MM-DD"), endMoment.format("YYYY-MM-DD")],
+            range: [moment(startMoment).add(-1, "days").format("YYYY-MM-DD"), moment(endMoment).add(1, "days").format("YYYY-MM-DD")],
           },
           yaxis: {
             hoverformat: ".0f",
