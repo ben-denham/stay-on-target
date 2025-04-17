@@ -27,7 +27,7 @@ const fetchIssuesByJQL = async (jiraAuth, jql, estimateField, estimateToDays) =>
   let issues = [];
   let nextPageToken = undefined;
   do {
-    const response = await axiosInstance.post("search", null, {
+    const response = await axiosInstance.post("search", {
       nextPageToken: nextPageToken,
       jql: jql,
       maxResults: 5000,
