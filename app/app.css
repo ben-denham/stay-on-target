@@ -63,7 +63,7 @@ a {
 
 #configure-page form .inputs-wrapper > div input {
     color-scheme: dark;
-    color: #B30F00;
+    color: #FF1500;
     border: 0.1em solid #916D00;
     padding: 0.4em;
     font-family: "News Gothic Bold";
@@ -93,6 +93,6 @@ a {
     font-family: "SceletAF";
     font-size: 2em;
     border-radius: 0.4em;
-    background: #0f0e0a;
+    background: #1D1D1D;
     cursor: pointer;
 }
