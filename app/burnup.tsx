@@ -1,5 +1,5 @@
 import { use, useEffect, useState, Suspense } from "react";
-import { useNavigate, useSearchParams } from "react-router";
+import { useSearchParams } from "react-router";
 import axios from "axios";
 import moment from "moment";
 import Plot from 'react-plotly.js';
@@ -78,7 +78,7 @@ async function loadBurnupData(searchParams) {
     !start || !end
   ) {
     alert("Missing configuration, redirecting back to configuration form.");
-    navigate("/?" + searchParams.toString());
+    window.location = "/?" + searchParams.toString();
   }
 
   const issues = await fetchIssuesByJQL(jiraAuth, jql, estimateField, estimateToDays);
@@ -320,7 +320,6 @@ function Loading() {
 }
 
 export default function BurnupPage() {
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const title = searchParams.get("title");
