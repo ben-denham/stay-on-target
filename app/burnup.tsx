@@ -142,7 +142,7 @@ async function loadBurnupData(searchParams) {
   if (totalResolved >= totalScope) {
     projectedCompleted = "Direct Hit";
   }
-  else if (resolvedRate >= scopeRate) {
+  else if (resolvedRate > scopeRate) {
     const daysRemaining = Math.ceil((totalScope - totalResolved) / (resolvedRate - scopeRate));
     projectedCompleted = moment(todayMoment).add(daysRemaining, "days").format("MMM DD");
   }
